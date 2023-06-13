@@ -6,12 +6,25 @@ type ListNode struct {
 }
 
 func addTwoNumbers(l1 *ListNode, l2 *ListNode, carry int) *ListNode {
-	if l1 == nil || l2 == nil {
+	if l1 == nil && l2 == nil && carry == 0 {
 		return nil
 	}
 
-	var retCarry int
+	if l1 == nil {
+		l1 = &ListNode{
+			Val:  0,
+			Next: nil,
+		}
+	}
 
+	if l2 == nil {
+		l2 = &ListNode{
+			Val:  0,
+			Next: nil,
+		}
+	}
+
+  retCarry := 0
 	val := l1.Val + l2.Val + carry
 
 	if val >= 10 {
