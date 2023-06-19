@@ -5,7 +5,7 @@ type ListNode struct {
 	Next *ListNode
 }
 
-func addTwoNumbers(l1 *ListNode, l2 *ListNode, carry int) *ListNode {
+func AddTwoNumbers(l1 *ListNode, l2 *ListNode, carry int) *ListNode {
 	if l1 == nil && l2 == nil && carry == 0 {
 		return nil
 	}
@@ -34,25 +34,41 @@ func addTwoNumbers(l1 *ListNode, l2 *ListNode, carry int) *ListNode {
 
 	return &ListNode{
 		Val:  val,
-		Next: addTwoNumbers(l1.Next, l2.Next, retCarry),
+		Next: AddTwoNumbers(l1.Next, l2.Next, retCarry),
 	}
 }
 
-func makeList(nums []int) *ListNode {
+func MakeList(nums []int) *ListNode {
 	if len(nums) == 0 {
 		return nil
 	}
 
 	return &ListNode{
 		Val:  nums[0],
-		Next: makeList(nums[1:]),
+		Next: MakeList(nums[1:]),
 	}
 }
 
-func toInt(l *ListNode) int {
+func ToInt(l *ListNode) int {
 	if l.Next == nil {
 		return l.Val
 	}
 
-	return (toInt(l.Next) * 10) + l.Val
+	return (ToInt(l.Next) * 10) + l.Val
+}
+
+func ListsEqual(l1 *ListNode, l2 *ListNode) bool {
+  if l1 == nil && l2 == nil {
+    return true
+  }
+  if l1 == nil && l2 != nil {
+    return false
+  }
+  if l1 != nil && l2 == nil {
+    return false
+  }
+  if l1.Val != l2.Val {
+    return false
+  }
+  return ListsEqual(l1.Next, l2.Next)
 }
