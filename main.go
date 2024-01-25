@@ -82,3 +82,38 @@ func RecursiveIsValid(runes []rune, stack []rune) bool {
 
 	return RecursiveIsValid(runes[1:], stack[:len(stack)-1])
 }
+
+func ChatGPT_RecursiveIsValid(runes []rune, stack []rune) bool {
+	if len(runes) == 0 {
+		return len(stack) == 0
+	}
+
+	r, remainingRunes := runes[0], runes[1:]
+
+	switch r {
+	case OpenParenthesis, OpenBracket, OpenBrace:
+		return ChatGPT_RecursiveIsValid(remainingRunes, append(stack, r))
+
+	case CloseParenthesis, CloseBracket, CloseBrace:
+		if len(stack) == 0 || !ChatGPT_isValid(r, stack[len(stack)-1]) {
+			return false
+		}
+		return ChatGPT_RecursiveIsValid(remainingRunes, stack[:len(stack)-1])
+
+	default:
+		return ChatGPT_RecursiveIsValid(remainingRunes, stack)
+	}
+}
+
+func ChatGPT_isValid(r, head rune) bool {
+	switch r {
+	case CloseParenthesis:
+		return head == OpenParenthesis
+	case CloseBracket:
+		return head == OpenBracket
+	case CloseBrace:
+		return head == OpenBrace
+	default:
+		return false
+	}
+}
