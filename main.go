@@ -1,5 +1,11 @@
 package main
 
+import (
+	"fmt"
+	"log/slog"
+	"os"
+)
+
 const (
 	OpenParenthesis  = '('
 	CloseParenthesis = ')'
@@ -85,6 +91,7 @@ func RecursiveIsValid(runes []rune, stack []rune) bool {
 
 func ChatGPT_RecursiveIsValid(runes []rune, stack []rune) bool {
 	if len(runes) == 0 {
+		slog.Debug("return inside len(runes) == 0", "len(stack) == 0", len(stack) == 0)
 		return len(stack) == 0
 	}
 
@@ -96,6 +103,7 @@ func ChatGPT_RecursiveIsValid(runes []rune, stack []rune) bool {
 
 	case CloseParenthesis, CloseBracket, CloseBrace:
 		if len(stack) == 0 || !ChatGPT_isValid(r, stack[len(stack)-1]) {
+			slog.Debug("return inside CloseXYZ if", "value", false)
 			return false
 		}
 		return ChatGPT_RecursiveIsValid(remainingRunes, stack[:len(stack)-1])
@@ -116,4 +124,9 @@ func ChatGPT_isValid(r, head rune) bool {
 	default:
 		return false
 	}
+}
+
+func main() {
+	slog.SetDefault(slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelDebug})))
+	fmt.Println(ChatGPT_RecursiveIsValid([]rune("#asdf"), []rune{}))
 }

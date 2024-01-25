@@ -2,6 +2,8 @@ package main
 
 import (
 	"fmt"
+	"log/slog"
+	"os"
 	"testing"
 )
 
@@ -32,6 +34,7 @@ func TestRecursiveIsValid(t *testing.T) {
 		{"()", true},
 		{"()[]{}", true},
 		{"(]", false},
+		{"#asfd", false},
 	}
 
 	for i, test := range tests {
@@ -45,6 +48,8 @@ func TestRecursiveIsValid(t *testing.T) {
 }
 
 func TestChatGPT_RecursiveIsValid(t *testing.T) {
+	slog.SetDefault(slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelDebug})))
+
 	tests := []struct {
 		input string
 		want  bool
@@ -58,11 +63,12 @@ func TestChatGPT_RecursiveIsValid(t *testing.T) {
 		{"{[()]}", true},
 		{"{[(])}", false},
 		{"", true}, // an empty string is considered valid
+		{"#asfd", false},
 	}
 
 	for i, test := range tests {
 		t.Run(fmt.Sprintf("Test_%d", i), func(t *testing.T) {
-			got := RecursiveIsValid([]rune(test.input), make([]rune, 0))
+			got := ChatGPT_RecursiveIsValid([]rune(test.input), make([]rune, 0))
 			if got != test.want {
 				t.Errorf("for string '%s' expected '%t' got '%t'", test.input, test.want, got)
 			}
