@@ -5,37 +5,47 @@ func trap(height []int) int {
 		return 0
 	}
 
-	if height[0] == 0 {
-		return trap(height[1:])
-	}
+	trimedHeight := trimZeros(height)
 
-	if height[len(height)-1] == 0 {
-		return trap(height[:len(height)-1])
-	}
-
-	return countZeros(height) + trap(subtractOne(height))
+	return countZeros(trimedHeight) + trap(subtractOne(trimedHeight))
 }
 
-func subtractOne(height []int) []int {
-	if len(height) == 0 {
+func trimZeros(arr []int) []int {
+	if len(arr) == 0 {
 		return []int{}
 	}
 
-	if height[0] > 0 {
-		return append([]int{height[0] - 1}, subtractOne(height[1:])...)
+	if arr[0] == 0 {
+		return trimZeros(arr[1:])
 	}
 
-	return append([]int{height[0]}, subtractOne(height[1:])...)
+	if arr[len(arr)-1] == 0 {
+		return trimZeros(arr[:len(arr)-1])
+	}
+
+	return arr
 }
 
-func countZeros(height []int) int {
-	if len(height) == 0 {
+func countZeros(arr []int) int {
+	if len(arr) == 0 {
 		return 0
 	}
 
-	if height[0] == 0 {
-		return 1 + countZeros(height[1:])
+	if arr[0] == 0 {
+		return 1 + countZeros(arr[1:])
 	}
 
-	return countZeros(height[1:])
+	return countZeros(arr[1:])
+}
+
+func subtractOne(arr []int) []int {
+	if len(arr) == 0 {
+		return []int{}
+	}
+
+	if arr[0] > 0 {
+		return append([]int{arr[0] - 1}, subtractOne(arr[1:])...)
+	}
+
+	return append([]int{arr[0]}, subtractOne(arr[1:])...)
 }
