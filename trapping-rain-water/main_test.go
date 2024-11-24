@@ -23,6 +23,13 @@ func TestTrap(t *testing.T) {
 		},
 	}
 
+	implementations := []func([]int) int{
+		trap_V1,
+		trap_V2,
+		trap_V3,
+		trap_V4,
+	}
+
 	testFunc := func(tc TestCase, trap func([]int) int) func(*testing.T) {
 		return func(t *testing.T) {
 			if actual := trap(tc.height); actual != tc.expected {
@@ -31,11 +38,16 @@ func TestTrap(t *testing.T) {
 		}
 	}
 
-	for i, tc := range testCases {
-		t.Run(fmt.Sprintf("Trap V1: Example %d", i), testFunc(tc, trap_V1))
-		t.Run(fmt.Sprintf("Trap V2: Example %d", i), testFunc(tc, trap_V2))
-		t.Run(fmt.Sprintf("Trap V3: Example %d", i), testFunc(tc, trap_V3))
-		t.Run(fmt.Sprintf("Trap V4: Example %d", i), testFunc(tc, trap_V4))
+	testImpl := func(impl func([]int) int) func(*testing.T) {
+		return func(t *testing.T) {
+			for i, tc := range testCases {
+				t.Run(fmt.Sprintf("Example %d", i), testFunc(tc, impl))
+			}
+		}
+	}
+
+	for i, impl := range implementations {
+		t.Run(fmt.Sprintf("Trap V%d", i), testImpl(impl))
 	}
 }
 
