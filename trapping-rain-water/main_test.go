@@ -34,6 +34,8 @@ func TestTrap(t *testing.T) {
 	for i, tc := range testCases {
 		t.Run(fmt.Sprintf("Trap V1: Example %d", i), testFunc(tc, trap_V1))
 		t.Run(fmt.Sprintf("Trap V2: Example %d", i), testFunc(tc, trap_V2))
+		t.Run(fmt.Sprintf("Trap V3: Example %d", i), testFunc(tc, trap_V3))
+		t.Run(fmt.Sprintf("Trap V4: Example %d", i), testFunc(tc, trap_V4))
 	}
 }
 
@@ -186,12 +188,108 @@ func TestSubtractOne(t *testing.T) {
 	testFunc := func(tc TestCase) func(*testing.T) {
 		return func(t *testing.T) {
 			if res := subtractOne(tc.arr); !slices.Equal(res, tc.expected) {
-				t.Errorf("Array subtracted correctly: Expected: %v Got: %v", tc.expected, res)
+				t.Errorf("Array subtracted incorrectly: Expected: %v Got: %v", tc.expected, res)
 			}
 		}
 	}
 
 	for i, tc := range testCases {
 		t.Run(fmt.Sprintf("Example %d", i), testFunc(tc))
+	}
+}
+
+func TestMaxLeftArr(t *testing.T) {
+	type TestCase struct {
+		height   []int
+		expected []int
+	}
+
+	testCases := []TestCase{
+		{
+			height:   []int{0, 1, 0, 2, 1, 0, 1, 3, 2, 1, 2, 1},
+			expected: []int{0, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 3},
+		},
+		{
+			height:   []int{4, 2, 0, 3, 2, 5},
+			expected: []int{4, 4, 4, 4, 4, 5},
+		},
+	}
+
+	testFunc := func(tc TestCase, maxLeftFunc func([]int) []int) func(*testing.T) {
+		return func(t *testing.T) {
+			if res := maxLeftFunc(tc.height); !slices.Equal(res, tc.expected) {
+				t.Errorf("Expected: %v Got: %v", tc.expected, res)
+			}
+		}
+	}
+
+	for i, tc := range testCases {
+		t.Run(fmt.Sprintf("Recursive maxLeftArr: Example %d", i), testFunc(tc, maxLeftArr))
+		t.Run(fmt.Sprintf("Iterative maxLeftArr: Example %d", i), testFunc(tc, iterativeMaxLeftArr))
+	}
+}
+
+func TestMaxRightArr(t *testing.T) {
+	type TestCase struct {
+		height   []int
+		expected []int
+	}
+
+	testCases := []TestCase{
+		{
+			height:   []int{0, 1, 0, 2, 1, 0, 1, 3, 2, 1, 2, 1},
+			expected: []int{3, 3, 3, 3, 3, 3, 3, 3, 2, 2, 2, 1},
+		},
+		{
+			height:   []int{4, 2, 0, 3, 2, 5},
+			expected: []int{5, 5, 5, 5, 5, 5},
+		},
+	}
+
+	testFunc := func(tc TestCase, maxRightFunc func([]int) []int) func(*testing.T) {
+		return func(t *testing.T) {
+			if res := maxRightFunc(tc.height); !slices.Equal(res, tc.expected) {
+				t.Errorf("Expected: %v Got: %v", tc.expected, res)
+			}
+		}
+	}
+
+	for i, tc := range testCases {
+		t.Run(fmt.Sprintf("Recursive maxRightArr: Example %d", i), testFunc(tc, maxRightArr))
+		t.Run(fmt.Sprintf("Iterative maxRightArr: Example %d", i), testFunc(tc, iterativeMaxRightArr))
+	}
+}
+
+func TestMinLR(t *testing.T) {
+	type TestCase struct {
+		left     []int
+		right    []int
+		expected []int
+	}
+
+	testCases := []TestCase{
+		{
+			left:     []int{0, 1, 0, 2, 1, 0, 1, 3, 2, 1, 2, 1},
+			right:    []int{3, 3, 3, 3, 3, 3, 3, 3, 2, 2, 2, 1},
+			expected: []int{0, 1, 0, 2, 1, 0, 1, 3, 2, 1, 2, 1},
+		},
+		{
+			left:     []int{4, 2, 0, 3, 2, 5},
+			right:    []int{5, 5, 5, 5, 5, 5},
+			expected: []int{4, 2, 0, 3, 2, 5},
+		},
+	}
+
+	testFunc := func(tc TestCase, minLRFunc func([]int, []int) []int) func(*testing.T) {
+		return func(t *testing.T) {
+			if res := minLRFunc(tc.left, tc.right); !slices.Equal(res, tc.expected) {
+				t.Errorf("Expected: %v Got: %v", tc.expected, res)
+			}
+		}
+	}
+
+	for i, tc := range testCases {
+		t.Run(fmt.Sprintf("Recursive minLR: Example %d", i), testFunc(tc, minLR))
+		t.Run(fmt.Sprintf("Iterative minLR: Example %d", i), testFunc(tc, iterativeMinLR))
 	}
 }

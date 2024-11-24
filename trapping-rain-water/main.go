@@ -81,3 +81,141 @@ func trapMax(height []int) int {
 	}
 	return max
 }
+
+// ------------------------------------------------
+
+func trap_V3(height []int) int {
+	left := maxLeftArr(height)
+	right := maxRightArr(height)
+	lrmin := minLR(left, right)
+
+	return ReduceTwoIntArrays(height, lrmin, func(height int, lrmin int) int {
+		if lrmin > height {
+			return lrmin - height
+		}
+		return 0
+	})
+}
+
+func ReduceTwoIntArrays(arr1, arr2 []int, callback func(int, int) int) int {
+	if len(arr1) == 0 || len(arr2) == 0 {
+		return 0
+	}
+	return callback(arr1[0], arr2[0]) + ReduceTwoIntArrays(arr1[1:], arr2[1:], callback)
+}
+
+func minLR(left, right []int) []int {
+	if len(left) == 0 || len(right) == 0 {
+		return []int{}
+	}
+
+	if left[0] < right[0] {
+		return append([]int{left[0]}, minLR(left[1:], right[1:])...)
+	}
+
+	return append([]int{right[0]}, minLR(left[1:], right[1:])...)
+}
+
+func maxLeftArr(height []int) []int {
+	if len(height) == 0 {
+		return []int{}
+	}
+
+	maxLeft := 0
+	newMax := height[len(height)-1]
+
+	arr := maxLeftArr(height[:len(height)-1])
+	if len(arr) > 0 {
+		maxLeft = arr[len(arr)-1]
+	}
+
+	if newMax < maxLeft {
+		return append(arr, maxLeft)
+	}
+
+	return append(arr, newMax)
+}
+
+func maxRightArr(height []int) []int {
+	if len(height) == 0 {
+		return []int{}
+	}
+
+	maxRight := 0
+	newMax := height[0]
+
+	arr := maxRightArr(height[1:])
+	if len(arr) > 0 {
+		maxRight = arr[0]
+	}
+
+	if newMax < maxRight {
+		return append([]int{maxRight}, arr...)
+	}
+
+	return append([]int{newMax}, arr...)
+}
+
+// ------------------------------------------------
+
+func trap_V4(height []int) int {
+	sum := 0
+	lrmin := iterativeMinLR(iterativeMaxLeftArr(height), iterativeMaxRightArr(height))
+
+	for i := 0; i < len(height); i++ {
+		if lrmin[i] > height[i] {
+			sum += lrmin[i] - height[i]
+		}
+	}
+
+	return sum
+}
+
+func iterativeMinLR(left, right []int) []int {
+	if len(left) != len(right) {
+		return []int{}
+	}
+
+	res := make([]int, len(left))
+	for i := 0; i < len(left); i++ {
+		if left[i] < right[i] {
+			res[i] = left[i]
+		} else {
+			res[i] = right[i]
+		}
+	}
+
+	return res
+}
+
+func iterativeMaxLeftArr(height []int) []int {
+	arr := make([]int, 0, len(height))
+	prevMax := 0
+
+	for _, v := range height {
+		if v > prevMax {
+			arr = append(arr, v)
+			prevMax = v
+		} else {
+			arr = append(arr, prevMax)
+		}
+	}
+
+	return arr
+}
+
+func iterativeMaxRightArr(height []int) []int {
+	arr := make([]int, len(height))
+	prevMax := 0
+
+	for i := len(height) - 1; i >= 0; i-- {
+		if height[i] > prevMax {
+			arr[i] = height[i]
+			prevMax = height[i]
+		} else {
+			arr[i] = prevMax
+		}
+	}
+
+	return arr
+}
