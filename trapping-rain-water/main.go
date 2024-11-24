@@ -219,3 +219,54 @@ func iterativeMaxRightArr(height []int) []int {
 
 	return arr
 }
+
+// ------------------------------------------------
+
+func trap_V5(height []int) int {
+	if len(height) == 0 {
+		return 0
+	}
+
+	left, right := 0, len(height)-1
+	leftMax, rightMax := height[left], height[right]
+	res := 0
+
+	for left < right {
+		if leftMax < rightMax {
+			left++
+			leftMax = max(leftMax, height[left])
+			res += leftMax - height[left]
+		} else {
+			right--
+			rightMax = max(rightMax, height[right])
+			res += rightMax - height[right]
+		}
+	}
+
+	return res
+}
+
+// ------------------------------------------------
+
+func trap_V6(height []int) int {
+	if len(height) == 0 {
+		return 0
+	}
+	return rec_trap(height, height[0], height[len(height)-1])
+}
+
+func rec_trap(height []int, leftMax, rightMax int) int {
+	if len(height) == 0 {
+		return 0
+	}
+
+	if leftMax < rightMax {
+		newLeftMax := max(leftMax, height[0])
+		trapped := (newLeftMax - height[0])
+		return trapped + rec_trap(height[1:], newLeftMax, rightMax)
+	}
+
+	newRightMax := max(rightMax, height[len(height)-1])
+	trapped := (newRightMax - height[len(height)-1])
+	return trapped + rec_trap(height[:len(height)-1], leftMax, newRightMax)
+}

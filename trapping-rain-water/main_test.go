@@ -28,6 +28,8 @@ func TestTrap(t *testing.T) {
 		trap_V2,
 		trap_V3,
 		trap_V4,
+		trap_V5,
+		trap_V6,
 	}
 
 	testFunc := func(tc TestCase, trap func([]int) int) func(*testing.T) {
@@ -47,7 +49,7 @@ func TestTrap(t *testing.T) {
 	}
 
 	for i, impl := range implementations {
-		t.Run(fmt.Sprintf("Trap V%d", i), testImpl(impl))
+		t.Run(fmt.Sprintf("Trap V%d", i+1), testImpl(impl))
 	}
 }
 
