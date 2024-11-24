@@ -1,13 +1,15 @@
 package main
 
-func trap(height []int) int {
+// ------------------------------------------------
+
+func trap_V1(height []int) int {
 	if len(height) == 0 {
 		return 0
 	}
 
 	trimedHeight := trimZeros(height)
 
-	return countZeros(trimedHeight) + trap(subtractOne(trimedHeight))
+	return countZeros(trimedHeight) + trap_V1(subtractOne(trimedHeight))
 }
 
 func trimZeros(arr []int) []int {
@@ -48,4 +50,34 @@ func subtractOne(arr []int) []int {
 	}
 
 	return append([]int{arr[0]}, subtractOne(arr[1:])...)
+}
+
+// ------------------------------------------------
+
+func trap_V2(height []int) int {
+	sum := 0
+	for i := 0; i < len(height); i++ {
+		leftMax := trapMax(height[:i])
+		rightMax := trapMax(height[i+1:])
+
+		minLR := leftMax
+		if rightMax < minLR {
+			minLR = rightMax
+		}
+
+		if minLR > height[i] {
+			sum += minLR - height[i]
+		}
+	}
+	return sum
+}
+
+func trapMax(height []int) int {
+	max := 0
+	for i := 0; i < len(height); i++ {
+		if height[i] > max {
+			max = height[i]
+		}
+	}
+	return max
 }

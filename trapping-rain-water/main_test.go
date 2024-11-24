@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"reflect"
+	"slices"
 	"testing"
 )
 
@@ -23,7 +23,7 @@ func TestTrap(t *testing.T) {
 		},
 	}
 
-	testFunc := func(tc TestCase) func(*testing.T) {
+	testFunc := func(tc TestCase, trap func([]int) int) func(*testing.T) {
 		return func(t *testing.T) {
 			if actual := trap(tc.height); actual != tc.expected {
 				t.Errorf("Expected %d, but got %d", tc.expected, actual)
@@ -32,7 +32,8 @@ func TestTrap(t *testing.T) {
 	}
 
 	for i, tc := range testCases {
-		t.Run(fmt.Sprintf("Example %d", i), testFunc(tc))
+		t.Run(fmt.Sprintf("Trap V1: Example %d", i), testFunc(tc, trap_V1))
+		t.Run(fmt.Sprintf("Trap V2: Example %d", i), testFunc(tc, trap_V2))
 	}
 }
 
@@ -79,7 +80,7 @@ func TestTrimZeros(t *testing.T) {
 
 	testFunc := func(tc TestCase) func(*testing.T) {
 		return func(t *testing.T) {
-			if res := trimZeros(tc.arr); !reflect.DeepEqual(res, tc.expected) {
+			if res := trimZeros(tc.arr); !slices.Equal(res, tc.expected) {
 				t.Errorf("Array not trimmed correctly: Expected: %v Got: %v", tc.expected, res)
 			}
 		}
@@ -184,7 +185,7 @@ func TestSubtractOne(t *testing.T) {
 
 	testFunc := func(tc TestCase) func(*testing.T) {
 		return func(t *testing.T) {
-			if res := subtractOne(tc.arr); !reflect.DeepEqual(res, tc.expected) {
+			if res := subtractOne(tc.arr); !slices.Equal(res, tc.expected) {
 				t.Errorf("Array subtracted correctly: Expected: %v Got: %v", tc.expected, res)
 			}
 		}
