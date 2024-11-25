@@ -60,6 +60,10 @@ func TestDeserialize(t *testing.T) {
 			input:    "[123,[456,[789]]]",
 			expected: []any{123, []any{456, []any{789}}},
 		},
+		{
+			input:    "[123,456,[788,799,833],[[]],10,[]]",
+			expected: []any{123, 456, []any{788, 799, 833}, []any{[]any{}}, 10, []any{}},
+		},
 	}
 
 	testFunc := func(tc TestCase) func(*testing.T) {
