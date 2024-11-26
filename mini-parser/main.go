@@ -90,6 +90,30 @@ func breakdown(s string) []string {
 	return res
 }
 
+func rec_breakdown(s string, index int, depth int) []string {
+	if len(s) == 0 {
+		return []string{}
+	}
+
+	if index >= len(s)-1 {
+		return []string{s}
+	}
+
+	if s[index] == '[' {
+		return rec_breakdown(s, index+1, depth+1)
+	}
+
+	if s[index] == ']' {
+		return rec_breakdown(s, index+1, depth-1)
+	}
+
+	if s[index] == ',' && depth == 0 {
+		return append([]string{s[:index]}, rec_breakdown(s[index+1:], 0, 0)...)
+	}
+
+	return rec_breakdown(s, index+1, depth)
+}
+
 func NestedIntegerToArray(n *NestedInteger) any {
 	if n == nil {
 		return nil
