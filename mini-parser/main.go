@@ -2,8 +2,6 @@ package main
 
 import (
 	"strconv"
-	"strings"
-	"unicode"
 )
 
 type NestedInteger struct {
@@ -43,7 +41,7 @@ func deserialize(s string) *NestedInteger {
 		return nil
 	}
 
-	if unicode.IsDigit(rune(s[0])) {
+	if (s[0] >= '0' && s[0] <= '9') || s[0] == '-' {
 		num, err := strconv.Atoi(s)
 		if err != nil {
 			return nil
@@ -54,26 +52,42 @@ func deserialize(s string) *NestedInteger {
 	}
 
 	if s[0] == '[' && s[len(s)-1] == ']' {
-		trimmed := s[1 : len(s)-1]
-
-		firstBracket := len(trimmed)
-		if index := strings.Index(trimmed, "["); index > -1 {
-			firstBracket = index
-		}
-
 		res := &NestedInteger{}
-		for _, v := range strings.Split(trimmed[:firstBracket], ",") {
-			if parsed := deserialize(v); parsed != nil {
+		for _, str := range breakdown(s[1 : len(s)-1]) {
+			if parsed := deserialize(str); parsed != nil {
 				res.Add(*parsed)
 			}
-		}
-		if parsed := deserialize(trimmed[firstBracket:]); parsed != nil {
-			res.Add(*parsed)
 		}
 		return res
 	}
 
 	return nil
+}
+
+func breakdown(s string) []string {
+	if len(s) == 0 {
+		return []string{}
+	}
+
+	depth := 0
+	start := 0
+
+	res := []string{}
+	for i, v := range s {
+		if v == '[' {
+			depth++
+		}
+		if v == ']' {
+			depth--
+		}
+		if v == ',' && depth == 0 {
+			res = append(res, s[start:i])
+			start = i + 1
+		}
+	}
+	res = append(res, s[start:])
+
+	return res
 }
 
 func NestedIntegerToArray(n *NestedInteger) any {
