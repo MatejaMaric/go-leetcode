@@ -29,11 +29,39 @@ func letterCombinations(digits string) []string {
 
 	rest := letterCombinations(strings.Join(digitsArr[1:], ""))
 
-	result := []string{}
-	for _, letter := range letters {
-		for _, r := range rest {
-			result = append(result, letter+r)
-		}
+	return FlatMap(letters, func(letter string) []string {
+		return Map(rest, func(r string) string {
+			return letter + r
+		})
+	})
+}
+
+func FlatMap[A, B any](input []A, f func(A) []B) []B {
+	var result []B
+	for _, v := range input {
+		result = append(result, f(v)...)
 	}
 	return result
+}
+
+func Map[A, B any](input []A, f func(A) B) []B {
+	var result []B
+	for _, v := range input {
+		result = append(result, f(v))
+	}
+	return result
+}
+
+func FlatMapRecursive[A, B any](input []A, f func(A) []B) []B {
+	if len(input) == 0 {
+		return []B{}
+	}
+	return append(f(input[0]), FlatMapRecursive(input[1:], f)...)
+}
+
+func MapRecursive[A, B any](input []A, f func(A) B) []B {
+	if len(input) == 0 {
+		return []B{}
+	}
+	return append([]B{f(input[0])}, MapRecursive(input[1:], f)...)
 }
